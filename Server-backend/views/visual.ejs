@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+#patients {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#patients td, #patients th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#patients tr:nth-child(even){background-color: #f2f2f2;}
+
+#patients tr:hover {background-color: #ddd;}
+
+#patients th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+</style>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart','line']});
+      google.charts.setOnLoadCallback(drawChart2);
+      google.charts.setOnLoadCallback(drawChart3);
+
+
+      function drawChart2() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'time');
+        data.addColumn('number', 'heart_rate');
+
+        <% var len = heart.length; %>
+        <% for (var i=0; i < len; i++) {%>
+          str = "<%= heart[i].time %>";
+          data.addRow([str,<%= heart[i].value %>]);
+          <% } %>
+
+
+        var options = {
+          chart: {
+          title: 'Heart Rate History'
+        },
+        vAxis: {
+          title: 'Heart Rate'
+        },
+        hAxis:{
+          title: 'Time'
+        },
+        width:1080,
+        height:720
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('heart_chart'));
+        chart.draw(data, options);
+
+      }
+
+      function drawChart3() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'time');
+        data.addColumn('number', 'Steps');
+
+        <% len = steps.length; %>
+        <% for (var i=0; i < len; i++) {%>
+          str = "<%= steps[i].time %>";
+          data.addRow([str,<%= steps[i].value %>]);
+          <% } %>
+
+
+        var options = {
+          chart: {
+          title: 'Steps History'
+        },
+        vAxis: {
+          title: 'Number of steps'
+        },
+        hAxis:{
+          title: 'Time'
+        },
+        width:1080,
+        height:720
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('step_chart'));
+        chart.draw(data, options);
+
+      }
+    </script>
+  </head>
+
+  <body>
+    <%- include('partials/nav'); %>
+    <h1>Welcome <%= info.name %></h1>
+
+    <table class="columns">
+      <tr>
+        <td><div id="heart_chart" ></div></td>
+      </tr>
+    </table>
+    <table class="columns">
+      <tr>
+        <td><div id="step_chart" ></div></td>
+      </tr>
+    </table>
+
+    <h2>Activity History of Today</h2>
+    <table id="patients">
+      <tr>
+        <th>Criteria</th>
+        <th>Value</th>
+      </tr>
+        <tr>
+          <td> Calories Burned Total </td>
+          <td><%= calories%></td>
+        </tr>
+        <tr>
+          <td> Calories Burned from Activities </td>
+          <td><%= activecalories%></td>
+        </tr>
+        <tr>
+          <td> Total Minutes of Sedentary Active </td>
+          <td><%= sed%></td>
+        </tr>
+        <tr>
+          <td> Total Minutes of Lightly Active </td>
+          <td><%= la%></td>
+        </tr>
+        <tr>
+          <td> Total Minutes of Fairly Active </td>
+          <td><%= fa%></td>
+        </tr>
+        <tr>
+          <td> Total Minutes of Highly Active </td>
+          <td><%= va%></td>
+        </tr>
+
+    </table>
+
+    <h2>Events:</h2>
+    <table id="patients">
+      <tr>
+        <th>Time</th>
+        <th>Event</th>
+      </tr>
+      <% len = info.events.length; %>
+      <% for (var i=len-1; i > -1; i--) {%>
+        <tr>
+          <td><%= info.events[i].time.toLocaleString() %></a></td>
+          <td><%= info.events[i].event %></td>
+        </tr>
+        <% } %>
+    </table>
+  </body>
+</html>

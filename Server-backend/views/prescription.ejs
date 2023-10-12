@@ -1,0 +1,61 @@
+<div class="row mt-5">
+  <div class="col-md-6 m-auto">
+    <div class="card card-body">
+      <h1 class="text-center mb-3"><i class="fas fa-sign-in-alt"></i>  Login</h1>
+      <form action="/:id1/:id2/setprescription" method="POST">
+        <div class="form-group">
+          <label for="from">From:</label>
+          <input
+            type="name"
+            id="from"
+            name="from"
+            class="form-control"
+            placeholder=<%= from %>
+            value = <%= from %>
+          />
+        </div>
+        <div class="form-group">
+          <label for="to">To:</label>
+          <input
+            type="name"
+            id="to"
+            name="to"
+            class="form-control"
+            placeholder=<%= to %>
+            value = <%= to %>
+            />
+        </div>
+        <div class="form-group">
+          <label for="actype">Monitoring Parameters For</label>
+          <select id="actype" name="actype">
+            <option value="heart_rate">Normal Heart Rate Range</option>
+            <option value="food_intake">Normal Food Intake Range</option>
+            <option value="water_intake_oz">Normal Water Intake Range</option>
+            <option value="movement">Normal step range for every two hours (Only checks if step count is below the low value)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="lowamount">Low Baseline Normal</label>
+          <input
+            type="number"
+            id="lowamount"
+            name="lowamount"
+            class="form-control"
+            placeholder="Enter The Lowest Normal Amount."
+            />
+        </div>
+        <div class="form-group">
+          <label for="highamount">High Baseline Normal</label>
+          <input
+            type="number"
+            id="highamount"
+            name="highamount"
+            class="form-control"
+            placeholder="Enter The Highest Normal Amount."
+            />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Send</button>
+      </form>
+    </div>
+  </div>
+</div>

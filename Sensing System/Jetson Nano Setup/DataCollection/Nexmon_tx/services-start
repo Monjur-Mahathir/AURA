@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cd /jffs/send_packets
+./reload.sh
+./config.sh 0x1 0xf000
+./transmit4ever80fastng.sh 4000
+
+

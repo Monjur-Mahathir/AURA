@@ -1,0 +1,70 @@
+<div class="row mt-5">
+  <div class="col-md-6 m-auto">
+    <div class="card card-body">
+      <h1 class="text-center mb-3">
+        <i class="fas fa-user-plus"></i> Register
+      </h1>
+      <form id="register-form" action="/register" method="POST">
+        <div class="form-group">
+          <label for="uid">User Id</label>
+          <input
+            type="text"
+            id="uid"
+            name="uid"
+            class="form-control"
+            placeholder="Enter User Id"
+            value="<%= typeof text != 'undefined' ? name : '' %>"
+          />
+        </div>
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input
+            type="name"
+            id="name"
+            name="name"
+            class="form-control"
+            placeholder="Enter Name"
+            value="<%= typeof name != 'undefined' ? name : '' %>"
+          />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control"
+            placeholder="Enter Email"
+            value="<%= typeof email != 'undefined' ? email : '' %>"
+          />
+        </div>
+        <div class="form-group">
+          <label for="phone">Contact No</label>
+          <input
+            type="number"
+            id="phone"
+            name="phone"
+            class="form-control"
+            placeholder="Enter Phone Number"
+            value="<%= typeof phone != 'undefined' ? email : '' %>"
+          />
+        </div>
+        <div class="form-group">
+          <label for="pass">Password</label>
+          <input
+            type="password"
+            id="pass"
+            name="pass"
+            class="form-control"
+            placeholder="Create Password"
+            value="<%= typeof password != 'undefined' ? password : '' %>"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          Register
+        </button>
+      </form>
+      <p class="lead mt-4">Have An Account? <a href="/login">Login</a></p>
+    </div>
+  </div>
+</div>

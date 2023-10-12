@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+#patients {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#patients td, #patients th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#patients tr:nth-child(even){background-color: #f2f2f2;}
+
+#patients tr:hover {background-color: #ddd;}
+
+#patients th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+</style>
+  </head>
+  <body>
+
+    <%- include('partials/nav'); %>
+    <h1>Welcome <%= info.name %></h1>
+    <h2>Patient List:</h2>
+      <table id="patients">
+        <tr>
+          <th>Patient Name</th>
+          <th>Email Address</th>
+          <th>Phone</th>
+          <th>Send Messages</th>
+          <th>Patient Details Form</th>
+          <th>Notification</th>
+          <th></th>
+        </tr>
+        <% len = patients.length; %>
+        <% for (var i=0; i < len; i++) {%>
+          <tr>
+            <td><a href = "/<%= patients[i].userid%>"><%= patients[i].name %></a></td>
+            <td><a href="/<%= info.userid %>/<%= patients[i].userid%>/message">Send <%= patients[i].name %> a message</a></td>
+            <td><a href="/<%= info.userid %>/<%= patients[i].userid%>/setDetails">Set Details</a></td>
+            <% if (patients[i].fall_notification.status == 'fall') {%>
+              <td>This patient has fallen. Please check on him.</td>
+              <td><a href = "/<%= patients[i].userid%>/clearNoti?type=fall">Resolved issue</a></td>
+            <% } %>
+            <% if (patients[i].other_notification != 'None') {%>
+              <td>This patient has some problem with <% patients[i].other_notification %/>. Please check on him.</td>
+              <td><a href = "/<%= patients[i].userid%>/clearNoti?type=other">Resolved issue</a></td>
+            <% } %>
+            <% if( patients[i].other_notification == 'None' && patients[i].fall_notification == 'None' )  {%>
+              <td>None</td>
+              <td>None</td>
+            <% } %>
+          </tr>
+
+          <% } %>
+      </table>
+   </body>
+</html>

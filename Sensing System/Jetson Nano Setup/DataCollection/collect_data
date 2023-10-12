@@ -1,0 +1,6 @@
+#!/bin/sh
+
+konsole --noclose -e ./ford_rgb & PIDMIX=$!
+./csi_collect.sh & PIDIOS=$!
+wait $PIDMIX
+wait $PIDIOS

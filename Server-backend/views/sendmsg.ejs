@@ -1,0 +1,36 @@
+<div class="row mt-5">
+  <div class="col-md-6 m-auto">
+    <div class="card card-body">
+      <h1 class="text-center mb-3"><i class="fas fa-sign-in-alt"></i>  Login</h1>
+      <form action="/:id1/:id2/message" method="POST">
+        <div class="form-group">
+          <label for="from">From:</label>
+          <input
+            type="name"
+            id="from"
+            name="from"
+            class="form-control"
+            placeholder=<%= from %>
+            value = <%= from %>
+          />
+        </div>
+        <div class="form-group">
+          <label for="to">To:</label>
+          <input
+            type="name"
+            id="to"
+            name="to"
+            class="form-control"
+            placeholder=<%= to %>
+            value = <%= to %>
+            />
+        </div>
+        <div class="form-group">
+          <label for="msg">Type your message</label>
+          <textarea rows="10" cols="50" name="msg">Enter message here</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Send</button>
+      </form>
+    </div>
+  </div>
+</div>

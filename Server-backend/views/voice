@@ -1,0 +1,3 @@
+<Response>
+<Say>Hi, I am calling on behalf of AURA app. Patient <%= patient %> <%= msg %></Say>
+</Response>

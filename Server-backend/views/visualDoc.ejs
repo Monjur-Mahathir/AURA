@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+#patients {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#patients td, #patients th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#patients tr:nth-child(even){background-color: #f2f2f2;}
+
+#patients tr:hover {background-color: #ddd;}
+
+#patients th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+</style>
+  </head>
+  <body>
+
+    <%- include('partials/nav'); %>
+    <h1>Welcome <%= info.name %></h1>
+    <h2>Patient List:</h2>
+      <table id="patients">
+        <tr>
+          <th>Patient Name</th>
+          <th>Set Monitoring Parameters</th>
+          <th>Notification</th>
+          <th></th>
+        </tr>
+        <% len = patients.length; %>
+        <% for (var i=0; i < len; i++) {%>
+          <tr>
+            <td><a href = "/<%= patients[i].userid%>"><%= patients[i].name %></a></td>
+            <td><a href="/<%= info.userid %>/<%= patients[i].userid%>/setprescription">Set Monitoring Parameters</a></td>
+            <% if (patients[i].fall_notification.status == 'fall') {%>
+              <td>This patient has fallen. Please check on him.</td>
+              <td><a href = "/<%= patients[i].userid%>/clearNoti?type=fall">Resolve issue</a></td>
+            <% } %>
+            <% if (patients[i].water_notification.status == 'on') {%>
+              <td>This patient is not drinking enough water. Please check on him.</td>
+              <td><a href = "/<%= patients[i].userid%>/clearNoti?type=water">Resolve issue</a></td>
+            <% } %>
+            <% if (patients[i].food_notification.status == 'on') {%>
+              <td>This patient is not taking meals timely. Please check on him.</td>
+              <td><a href = "/<%= patients[i].userid%>/clearNoti?type=food">Resolve issue</a></td>
+            <% } %>
+            <% if (patients[i].heart_notification.status == 'on') {%>
+              <td>This patient's heart rate is unusual. Please check on him.</td>
+              <td><a href = "/<%= patients[i].userid%>/clearNoti?type=heart">Resolve issue</a></td>
+            <% } %>
+            <% if (patients[i].movement_notification.status == 'on') {%>
+              <td>This patient is not moving around enough. Please check on him.</td>
+              <td><a href = "/<%= patients[i].userid%>/clearNoti?type=movement">Resolve issue</a></td>
+            <% } %>
+            <% if( patients[i].water_notification.status == 'off' && patients[i].food_notification.status == 'off' && patients[i].heart_notification.status == 'off' && patients[i].movement_notification.status == 'off' && patients[i].fall_notification.status == 'off' )  {%>
+              <td>None</td>
+              <td>None</td>
+            <% } %>
+          </tr>
+
+          <% } %>
+      </table>
+   </body>
+</html>
