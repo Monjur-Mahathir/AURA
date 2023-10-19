@@ -1,8 +1,47 @@
 #!/bin/sh
 
 cd /jffs/send_packets
+
 ./reload.sh
-./config.sh 0xf000
-./transmit4ever80fastng.sh 4000 >/dev/null 2>&1 &
-sleep 3600
+
+./config.sh 0xf000 >/jffs/log_configuration
+tag=$( tail -n 1 /jffs/log_configuration  )
+if [[ "$tag" == "Read 476 bytes" ]]; then
+        echo "Router channels configured successfully" >>/jffs/log
+else
+        echo "Router channels configuration failed. Requires restarting..." >>/jffs/log
+	sleep 60
+	service reboot
+fi
+
+num_lines=$(wc -l < /jffs/log)
+if [ $num_lines -ge 500 ]; then
+        rm /jffs/log
+fi
+
+./transmit4ever80fastng.sh 4000 >/jffs/log_transmit &
+
+sleep 60
+previous_number="0"
+
+loop_count=1
+while [ $loop_count -le 30  ]
+do
+	sleep 120
+	
+	t=$( tail -2 /jffs/log_transmit | head -1 )
+	curr=${t#*= }
+	
+	if [ $curr -gt $previous_number ]; then
+        	previous_number=$curr
+		echo "" >/jffs/log_transmit
+	else
+       		echo "" >/jffs/log_transmit
+		echo "Number of packets sent not increasing. Requires restarting..." >>/jffs/log
+		echo "$curr" >>/jffs/log
+		service reboot
+	fi
+	loop_count=$(( $loop_count + 1  ))
+done
+
 service reboot
