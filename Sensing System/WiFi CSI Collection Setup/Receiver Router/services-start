@@ -1,5 +1,26 @@
 #!/bin/sh
 
 cd /jffs/recv_packets
+
+num_lines=$(wc -l < /jffs/log)
+if [ $num_lines -ge 500 ]; then
+  rm /jffs/log
+fi
+
 ./reload.sh
-./config.sh 0xf000
+if [ $? -eq 0 ]; then
+  echo "Dhd module loaded successfully" >>/jffs/log
+else
+  echo "Dhd module loading failed. Requires restarting..." >>/jffs/log
+fi
+
+./config.sh 0xf000 >/jffs/log_configuration
+
+tag=$( tail -n 1 /jffs/log_configuration  )
+if [[ "$tag" == "Read 476 bytes" ]]; then
+  echo "Router channels configured successfully" >>/jffs/log
+else
+  echo "Router channels configuration failed. Requires restarting..." >>/jffs/log
+  sleep 60
+	service reboot
+fi
