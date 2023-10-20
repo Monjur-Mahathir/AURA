@@ -2,6 +2,8 @@
 
 cd /jffs/send_packets
 
+sleep 60
+
 ./reload.sh
 
 ./config.sh 0xf000 >/jffs/log_configuration
