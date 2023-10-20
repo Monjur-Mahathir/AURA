@@ -2,6 +2,11 @@
 
 cd /jffs/send_packets
 
+num_lines=$(wc -l < /jffs/log)
+if [ $num_lines -ge 500 ]; then
+        rm /jffs/log
+fi
+
 sleep 60
 
 ./reload.sh
@@ -14,11 +19,6 @@ else
         echo "Router channels configuration failed. Requires restarting..." >>/jffs/log
 	sleep 60
 	service reboot
-fi
-
-num_lines=$(wc -l < /jffs/log)
-if [ $num_lines -ge 500 ]; then
-        rm /jffs/log
 fi
 
 ./transmit4ever80fastng.sh 4000 >/jffs/log_transmit &
