@@ -1,3 +1,7 @@
+Bluetooth library installation:
+    a. sudo apt-get install libbluetooth-dev
+    b. pip3 install pybluez
+
 In the Jetson Nano, we need to install the necessary libraries for collecting camera data from Intel RealSense depth camera D435i.
 
 Open a terminal and type the following:
