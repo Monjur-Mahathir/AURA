@@ -1,0 +1,36 @@
+2021-12-10 04:21:00,277 INFO     
+2021-12-10 04:21:37,630 INFO     Ready...
+2023-12-12 13:41:21,806 INFO     
+2023-12-12 13:41:36,919 ERROR    Traceback (most recent call last):
+
+2023-12-12 13:41:36,921 ERROR      File "run_model.py", line 135, in <module>
+
+2023-12-12 13:41:36,922 ERROR        
+2023-12-12 13:41:36,922 ERROR    model.load_state_dict(state_dict)
+2023-12-12 13:41:36,922 ERROR    
+
+2023-12-12 13:41:36,922 ERROR      File "/home/nano/.local/lib/python3.6/site-packages/torch/nn/modules/module.py", line 1483, in load_state_dict
+
+2023-12-12 13:41:36,978 ERROR        
+2023-12-12 13:41:36,979 ERROR    self.__class__.__name__, "\n\t".join(error_msgs)))
+2023-12-12 13:41:36,979 ERROR    
+
+2023-12-12 13:41:36,979 ERROR    RuntimeError
+2023-12-12 13:41:36,979 ERROR    : 
+2023-12-12 13:41:36,979 ERROR    Error(s) in loading state_dict for CSIHAR:
+	Missing key(s) in state_dict: "norm.weight", "norm.bias", "fc.weight", "fc.bias". 
+	Unexpected key(s) in state_dict: "norm1.weight", "norm1.bias", "fc2.weight", "fc2.bias". 
+2023-12-12 13:41:36,980 ERROR    
+
+2023-12-12 13:44:37,427 INFO     
+2021-12-10 04:16:41,744 INFO     
+2021-12-10 04:17:36,278 INFO     Ready...
+2021-12-10 04:40:18,525 INFO     
+2021-12-10 04:40:54,660 INFO     Ready...
+2021-12-10 04:42:46,964 INFO     
+2021-12-10 04:43:21,698 INFO     Ready...
+2021-12-10 04:56:18,194 INFO     
+2021-12-10 04:56:57,404 INFO     Ready...
+2021-12-10 04:57:28,666 INFO     
+2021-12-10 04:16:38,147 INFO     
+2021-12-10 04:17:35,136 INFO     Ready...
