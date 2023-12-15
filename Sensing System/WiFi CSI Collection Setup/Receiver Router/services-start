@@ -7,7 +7,7 @@ if [ $num_lines -ge 500 ]; then
   rm /jffs/log
 fi
 
-sleep 60
+sleep 30
 
 ./reload.sh
 if [ $? -eq 0 ]; then
@@ -18,11 +18,11 @@ fi
 
 ./config.sh 0xf000 >/jffs/log_configuration
 
-tag=$( tail -n 1 /jffs/log_configuration  )
-if [[ "$tag" == "Read 476 bytes" ]]; then
-  echo "Router channels configured successfully" >>/jffs/log
-else
-  echo "Router channels configuration failed. Requires restarting..." >>/jffs/log
-  sleep 60
-	service reboot
-fi
+#tag=$( tail -n 1 /jffs/log_configuration  )
+#if [[ "$tag" == "Read 476 bytes" ]]; then
+#  echo "Router channels configured successfully" >>/jffs/log
+#else
+#  echo "Router channels configuration failed. Requires restarting..." >>/jffs/log
+#  sleep 60
+#	service reboot
+#fi
