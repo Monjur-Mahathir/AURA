@@ -15,13 +15,16 @@ n_tot = n_ss * n_core
 total_capture = 4
 capture_per = 4
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print(device)
+
 class CSIHAR(nn.Module):
     def __init__(self, in_channels, num_class):
         super(CSIHAR, self).__init__()
         self.in_channels = in_channels
         self.num_class = num_class
 
-        self.norm1 = nn.LayerNorm(normalized_shape=[self.in_channels, 1000, 242])
+        self.norm = nn.LayerNorm(normalized_shape=[self.in_channels, 1000, 242])
 
         self.first_cnn_block = nn.Sequential(
             nn.Conv2d(in_channels=in_channels, out_channels=16, kernel_size=(3, 3)),
@@ -46,11 +49,11 @@ class CSIHAR(nn.Module):
         
         self.lstm = nn.LSTM(input_size=448, hidden_size=128, num_layers=3, batch_first=True, bidirectional=True)
 
-        self.fc2 = nn.Linear(in_features=256, out_features=num_class)
+        self.fc = nn.Linear(in_features=256, out_features=num_class)
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
-        out = self.norm1(x)
+        out = self.norm(x)
         out = self.first_cnn_block(out)
         out = self.second_cnn_block(out)
         out = self.third_cnn_block(out)
@@ -61,7 +64,7 @@ class CSIHAR(nn.Module):
         out, _ = self.lstm(out)
         out = out[:, -1, :]
 
-        out = self.fc2(out)
+        out = self.fc(out)
         out = self.softmax(out)
         return out
 
@@ -82,8 +85,11 @@ def process_data(filename):
     st = 0
     while not (csidata.core[st] == 0 and csidata.spatial[st] == 0):
         st += 1
-	
-    csi_buff = csi_buff[st:4000, :]
+    end = csidata.csi.shape[0] - 1
+    while not (csidata.core[end] == 4 and csidata.spatial[end] == 1):
+        end -= 1
+    csi_buff = csi_buff[st:end+1, :]
+    csi_buff = csi_buff[:1000*n_tot, :]
 
     csi_buff = np.fft.fftshift(csi_buff, axes=1)
     delete_idxs = np.argwhere(np.sum(csi_buff, axis=1) == 0)[:, 0]
@@ -119,7 +125,7 @@ if __name__ == "__main__":
 
     channels = 4
     num_classes = 7
-    MODEL_PATH = "test_470"
+    MODEL_PATH = "test_134"
     activity_cls_to_idx = {"empty": 0, "walking": 1, "running": 2, "jumping": 3, "standing_sitting": 4, "arm":5, "falling": 6}
     activity_cls = ["empty", "walking", "running", "jumping", "standing_sitting", "arm", "falling"]
 
@@ -131,14 +137,13 @@ if __name__ == "__main__":
 
     
     model = CSIHAR(in_channels=channels, num_class=num_classes)
-    state_dict = torch.load(MODEL_PATH, map_location='cuda')
-    model.load_state_dict(state_dict)
-    model = model.cuda()
+    model.load_state_dict(torch.load(MODEL_PATH))
+    model = model.to(device)
     model.eval()
     print("Model Loaded")
 
     example_input = torch.zeros(1, 4, 1000, 242)
-    example_input = example_input.cuda()
+    example_input = example_input.to(device)
 
     t0 = time.time()
     out = model(example_input)
@@ -187,7 +192,7 @@ if __name__ == "__main__":
                 pad = np.zeros((1, 4, extra, 242), dtype=np.float32)
                 csi = np.concatenate((csi, pad), axis=2)
                 print("Padded")
-            csi = torch.from_numpy(csi).cuda()
+            csi = torch.from_numpy(csi).to(device)
             y = model(csi)
             #print(csi.shape, y.data)
             

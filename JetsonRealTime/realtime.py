@@ -52,8 +52,8 @@ def main():
                 c = round(float(words[5]), 3)
                 g = round(float(words[6]), 3)
                 url = f"https://peoject-aura.herokuapp.com/setdata?id=debug1&E={e}&W={w}&R={r}&J={j}&L={l}&S={l}&C={c}&G={g}"
-                res = requests.get(url)
-                #print(url)
+                #res = requests.get(url)
+                print(url)
         f.close()
         p = os.system('echo %s|sudo -S %s' % (sudoPassword, lan_up))
         time.sleep(3)
