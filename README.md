@@ -10,8 +10,8 @@ Step 1 (Downloading Codes):
 Step 2 (Installing libraries)
   - We need to install pyTorch libraries for running the classification codes. These are the steps:
     - Open a terminal and run the following:
-       - dpkg-query --show nvidia-l4t-core 
-         This should give result something like "nvidia-l4t-core 32.7.1-20220219090432"
+       - dpkg-query --show nvidia-l4t-core
+       - This should give result something like "nvidia-l4t-core 32.7.1-20220219090432"
   - Now take a note of this l4t-core version number and check the correspnding jetpack version number from this website: "https://www.stereolabs.com/blog/nvidia-jetson-l4t-and-jetpack-support". For example, the L4T 32.7.1 corresponds to Jetpack 4.6.1
   - Now, go to this website: "https://developer.download.nvidia.com/compute/redist/jp/" and select the folder named after the Jetpack version. For our example case, we will select the v461 folder
   - Aftet that, we will select the "PyTorch" folder and inside it we will find the pytorch wheel file. Right click this link and select "Copy Link". For our Jetpack version 4.6.1, the link is: "https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl"
