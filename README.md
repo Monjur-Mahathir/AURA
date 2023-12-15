@@ -16,7 +16,7 @@ Step 2 (Installing libraries)
   - Now, go to this website: "https://developer.download.nvidia.com/compute/redist/jp/" and select the folder named after the Jetpack version. For our example case, we will select the v461 folder
   - Aftet that, we will select the "PyTorch" folder and inside it we will find the pytorch wheel file. Right click this link and select "Copy Link". For our Jetpack version 4.6.1, the link is: "https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl"
   - Now open a terminal and run the following lines of commands:
-    - export TORCH_INSTALL=(https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl)
+    - export TORCH_INSTALL=https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl
     - python3 -m pip install --upgrade pip
     - python3 -m pip install aiohttp numpy scipy
     - export "LD_LIBRARY_PATH=/usr/lib/llvm-8/lib:$LD_LIBRARY_PATH"
