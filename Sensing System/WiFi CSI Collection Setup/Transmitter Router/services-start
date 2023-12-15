@@ -7,23 +7,23 @@ if [ $num_lines -ge 500 ]; then
         rm /jffs/log
 fi
 
-sleep 60
+sleep 10
 
 ./reload.sh
 
 ./config.sh 0xf000 >/jffs/log_configuration
-tag=$( tail -n 1 /jffs/log_configuration  )
-if [[ "$tag" == "Read 476 bytes" ]]; then
-        echo "Router channels configured successfully" >>/jffs/log
-else
-        echo "Router channels configuration failed. Requires restarting..." >>/jffs/log
-	sleep 60
-	service reboot
-fi
+#tag=$( tail -n 1 /jffs/log_configuration  )
+#if [[ "$tag" == "Read 476 bytes" ]]; then
+#        echo "Router channels configured successfully" >>/jffs/log
+#else
+#        echo "Router channels configuration failed. Requires restarting..." >>/jffs/log
+#	sleep 60
+#	service reboot
+#fi
 
 ./transmit4ever80fastng.sh 4000 >/jffs/log_transmit &
 
-sleep 60
+sleep 10
 previous_number="0"
 
 loop_count=1
@@ -41,7 +41,7 @@ do
        		echo "" >/jffs/log_transmit
 		echo "Number of packets sent not increasing. Requires restarting..." >>/jffs/log
 		echo "$curr" >>/jffs/log
-		service reboot
+		#service reboot
 	fi
 	loop_count=$(( $loop_count + 1  ))
 done
