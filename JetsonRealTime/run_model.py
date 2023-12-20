@@ -175,9 +175,14 @@ if __name__ == "__main__":
                 while not (os.path.exists(next_path)):
                     time.sleep(1)
                     continue
-            else:
+	    elif (j >= (capture_per-1)) and (i < (total_capture-1)):
                 minute_file = "minute_" + str(i) + ".txt"
                 while not (os.path.exists(minute_file)):
+                    time.sleep(1)
+                    continue
+	    elif (j >= (capture_per-1)) and (i >= (total_capture-1)):
+		time.sleep(5)
+		while not (os.path.exists(file_path)):
                     time.sleep(1)
                     continue
             
