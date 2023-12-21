@@ -7,43 +7,42 @@ if [ $num_lines -ge 500 ]; then
         rm /jffs/log
 fi
 
-sleep 10
-
 ./reload.sh
 
 ./config.sh 0xf000 >/jffs/log_configuration
-#tag=$( tail -n 1 /jffs/log_configuration  )
-#if [[ "$tag" == "Read 476 bytes" ]]; then
-#        echo "Router channels configured successfully" >>/jffs/log
-#else
-#        echo "Router channels configuration failed. Requires restarting..." >>/jffs/log
-#	sleep 60
-#	service reboot
-#fi
 
-./transmit4ever80fastng.sh 4000 >/jffs/log_transmit &
+tag=$( tail -n 1 /jffs/log_configuration  )
+if [[ "$tag" == "Read 476 bytes" ]]; then
+        echo "Router channels configured successfully" >>/jffs/log
+else
+        echo "Router channels configuration failed. Requires restarting..." >>/jffs/log
+	sleep 20
+	service reboot
+fi
 
-sleep 10
-previous_number="0"
-
+acceptable_number="1200"
+offence_count="1"
+max_offence="3"
 loop_count=1
-while [ $loop_count -le 30  ]
+
+while [ $loop_count -le 2000  ]
 do
-	sleep 120
+	temp=$(./transmit4ever80fastng.sh 4000) 
 	
-	t=$( tail -2 /jffs/log_transmit | head -1 )
-	curr=${t#*= }
+	t=${#temp}
 	
-	if [ $curr -gt $previous_number ]; then
-        	previous_number=$curr
-		echo "" >/jffs/log_transmit
-	else
-       		echo "" >/jffs/log_transmit
-		echo "Number of packets sent not increasing. Requires restarting..." >>/jffs/log
-		echo "$curr" >>/jffs/log
-		#service reboot
+	if [ $t -lt $acceptable_number ]; then
+        	echo "Number of Packets not acceptable" >>/jffs/log
+		((offence_count++))
 	fi
+	
 	loop_count=$(( $loop_count + 1  ))
+	if [ $offence_count -gt $max_offence ]; then
+		echo "Maximum offence reached. Needs Restarting.">>/jffs/log
+		sleep 10
+		service reboot
+	fi
+	 
 done
 
 service reboot
