@@ -5,18 +5,31 @@ import numpy as np
 import csiread
 import sys
 import os
-
+import datetime
+from datetime import timezone
 import logging
 
 n_core = 4
 n_ss = 1
 n_tot = n_ss * n_core
 
-total_capture = 4
-capture_per = 4
+total_capture = 30
+capture_per = 15
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
+
+root_dir = "Test_"
+for i in range(1, total_capture):
+    data_dir = root_dir + str(i) + "/"
+    result_file = "results_" + str(i) + ".txt"
+    minute_file = "minute_" + str(i) + ".txt"
+    if os.path.isdir(data_dir):
+        os.system(f"rm -r {data_dir}")
+    if os.path.exists(result_file):
+        os.system(f"rm {result_file}")
+    if os.path.exists(minute_file):
+        os.system(f"rm {minute_file}")
 
 class CSIHAR(nn.Module):
     def __init__(self, in_channels, num_class):
@@ -81,7 +94,7 @@ def process_data(filename):
     for i in range(csidata.csi.shape[0]):
         csi_buff.append(csidata.csi[i])
     csi_buff = np.array(csi_buff, dtype=np.complex_)    	
-	    
+        
     st = 0
     while not (csidata.core[st] == 0 and csidata.spatial[st] == 0):
         st += 1
@@ -153,70 +166,101 @@ if __name__ == "__main__":
     out = model(example_input)
     t1 = time.time()
     print(t1 - t0)
+
+    print("Model Ready for inference. Please start another terminal and run realtime.py command")
     
     logger.info("Ready...")
 
     root_dir = "Test_"
-    for i in range(1, total_capture):
-        data_dir = root_dir + str(i) + "/"
+    
+    iteration_num = 0
+    while True:
+        iteration_num += 1
+        if iteration_num > 1:
+            while True:
+                with open("iter_confirmation.txt", 'r') as f:
+                    lines = f.readlines()
+                    curr = int(lines[-1].split('\n')[0].split(' ')[0])
+                f.close()    
+                if curr == iteration_num:
+                    break
+                time.sleep(1)
+        else:
+            with open("iter_confirmation.txt", 'w') as f:
+                s = "1\n"
+                f.writelines(s)
+            f.close()    
+        for i in range(1, total_capture):
+            data_dir = root_dir + str(i) + "/"
         
-        empty = [] #E
-        walking = [] #W
-        running = [] #R
-        jumping = [] #J
-        standing_sitting = [] #LS
-        arm = [] #C 
-        falling = [] #G
-        
-        for j in range(1, capture_per):
-            file_path = data_dir + str(j) + ".pcap"
-            if j < (capture_per-1):
-                next_path = data_dir + str(j+1) + ".pcap"
-                while not (os.path.exists(next_path)):
-                    time.sleep(1)
-                    continue
-	    elif (j >= (capture_per-1)) and (i < (total_capture-1)):
-                minute_file = "minute_" + str(i) + ".txt"
-                while not (os.path.exists(minute_file)):
-                    time.sleep(1)
-                    continue
-	    elif (j >= (capture_per-1)) and (i >= (total_capture-1)):
-		time.sleep(5)
-		while not (os.path.exists(file_path)):
-                    time.sleep(1)
-                    continue
+            empty = [] #E
+            walking = [] #W
+            running = [] #R
+            jumping = [] #J
+            standing_sitting = [] #LS
+            arm = [] #C 
+            falling = [] #G
+            times = [] #Timestamps
             
-            csi = process_data(file_path)
-            if csi is None:
-                os.system(f"pcapfix -d -o {file_path}")
+            for j in range(1, capture_per):
+                file_path = data_dir + str(j) + ".pcap"
+                if j < (capture_per-1):
+                    next_path = data_dir + str(j+1) + ".pcap"
+                    while not (os.path.exists(next_path)):
+                        time.sleep(1)
+                        continue
+                elif (j >= (capture_per-1)) and (i < (total_capture-1)):
+                    minute_file = "minute_" + str(i) + ".txt"
+                    while not (os.path.exists(minute_file)):
+                        time.sleep(1)
+                        continue
+                elif (j >= (capture_per-1)) and (i >= (total_capture-1)):
+                    time.sleep(5)
+                    while not (os.path.exists(file_path)):
+                        time.sleep(1)
+                        continue
+            
                 csi = process_data(file_path)
                 if csi is None:
-                    continue
-            if csi.shape[2] != 1000:
-                extra = 1000 - csi.shape[2]
-                pad = np.zeros((1, 4, extra, 242), dtype=np.float32)
-                csi = np.concatenate((csi, pad), axis=2)
-                print("Padded")
-            csi = torch.from_numpy(csi).to(device)
-            y = model(csi)
-            #print(csi.shape, y.data)
+                    os.system(f"pcapfix -d -o {file_path}")
+                    csi = process_data(file_path)
+                    if csi is None:
+                        continue
+                if csi.shape[2] != 1000:
+                    extra = 1000 - csi.shape[2]
+                    pad = np.zeros((1, 4, extra, 242), dtype=np.float32)
+                    csi = np.concatenate((csi, pad), axis=2)
+                    print("Padded")
+                csi = torch.from_numpy(csi).to(device)
+                y = model(csi)
+                #print(csi.shape, y.data)
             
-            empty.append(y.data[0][0].item())
-            walking.append(y.data[0][1].item())
-            running.append(y.data[0][2].item())
-            jumping.append(y.data[0][3].item())
-            standing_sitting.append(y.data[0][4].item())
-            arm.append(y.data[0][5].item())
-            falling.append(y.data[0][6].item())
+                empty.append(y.data[0][0].item())
+                walking.append(y.data[0][1].item())
+                running.append(y.data[0][2].item())
+                jumping.append(y.data[0][3].item())
+                standing_sitting.append(y.data[0][4].item())
+                arm.append(y.data[0][5].item())
+                falling.append(y.data[0][6].item())
+
+                dt = datetime.datetime.now()
+                local_timestamp = dt.timestamp()
+                times.append(local_timestamp)
         
-            _, predicted = torch.max(y.data, 1)
-            activity = activity_cls[int(predicted)]
-            print(activity)   
+                _, predicted = torch.max(y.data, 1)
+                activity = activity_cls[int(predicted)]
+                print(activity)   
               
-        out_file = "results_" + str(i) + ".txt"
-        with open(out_file, 'a') as f:
-            for k in range(len(empty)):
-                string = str(empty[k]) + " " + str(walking[k]) + " " + str(running[k]) + " " + str(jumping[k]) + " " + str(standing_sitting[k]) + " " + str(arm[k]) + " " + str(falling[k]) + "\n"
-                f.writelines(string)
-        f.close()     
-    
+            out_file = "results_" + str(i) + ".txt"
+            with open(out_file, 'a') as f:
+                for k in range(len(empty)):
+                    string = str(empty[k]) + " " + str(walking[k]) + " " + str(running[k]) + " " + str(jumping[k]) + " " + str(standing_sitting[k]) + " " + str(arm[k]) + " " + str(falling[k]) + " "+ str(times[k]) + "\n"
+                    f.writelines(string)
+            f.close()
+
+            permanent_out_file = "results_full.txt"
+            with open(permanent_out_file, 'a') as f1:
+                for k in range(len(empty)):
+                    string = str(empty[k]) + " " + str(walking[k]) + " " + str(running[k]) + " " + str(jumping[k]) + " " + str(standing_sitting[k]) + " " + str(arm[k]) + " " + str(falling[k]) + " "+ str(times[k]) + "\n"
+                    f1.writelines(string)
+            f1.close()
